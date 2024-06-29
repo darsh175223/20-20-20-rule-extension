@@ -1,10 +1,5 @@
 document.getElementById('signInButton').addEventListener('click', () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).then(result => {
-    console.log('User signed in:', result.user);
-  }).catch(error => {
-    console.error('Error signing in:', error);
-  });
+  chrome.tabs.create({ url: 'signIn.html' });
 });
 
 document.getElementById('saveSettings').addEventListener('click', () => {
@@ -40,6 +35,7 @@ chrome.storage.local.get(['isActive', 'endTime', 'darkMode', 'workDuration', 'br
   document.getElementById('darkMode').checked = result.darkMode;
   document.body.style.backgroundColor = result.darkMode ? 'black' : 'white';
   document.body.style.color = result.darkMode ? 'white' : 'black';
+
   if (result.isActive) {
     activateButton.classList.add('active');
     activateButton.textContent = 'Deactivate';
@@ -48,6 +44,16 @@ chrome.storage.local.get(['isActive', 'endTime', 'darkMode', 'workDuration', 'br
     activateButton.classList.remove('active');
     activateButton.textContent = 'Activate';
   }
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('settings').style.display = 'block';
+      document.getElementById('analyticsButton').style.display = 'block';
+    } else {
+      document.getElementById('settings').style.display = 'none';
+      document.getElementById('analyticsButton').style.display = 'none';
+    }
+  });
 });
 
 activateButton.addEventListener('click', () => {
@@ -80,7 +86,7 @@ function updateTimer(endTime, workDuration, breakDuration) {
   clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     let remaining = new Date(endTime) - Date.now();
-    if (remaining <= 0) {
+    if (isNaN(remaining)) {
       clearInterval(timerInterval);
       timerDiv.textContent = '0:00';
       triggerOverlay(breakDuration);

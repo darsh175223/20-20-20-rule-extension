@@ -3,12 +3,18 @@
 <head>
   <style>
     body {
-      width: 300px;
-      height: 250px;
+      width: 400px;
+      height: 300px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      margin: 20px;
+    }
+    #signInButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
     }
     #activateButton {
       background-color: red;
@@ -16,6 +22,7 @@
       padding: 10px;
       border: none;
       cursor: pointer;
+      margin-top: 20px;
     }
     #activateButton.active {
       background-color: green;
@@ -27,16 +34,15 @@
       margin-top: 10px;
     }
     #settings {
+      display: none;
       margin-top: 20px;
     }
     #darkModeToggle {
-      margin-top: 10px;
-    }
-    #signInButton {
-      margin-top: 10px;
+      margin-top: 20px;
     }
     #analyticsButton {
-      margin-top: 10px;
+      display: none;
+      margin-top: 20px;
     }
   </style>
 </head>

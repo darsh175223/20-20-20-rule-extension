@@ -8,7 +8,11 @@ const firebaseConfig = {
     measurementId: "YOUR_FIREBASE_MEASUREMENT_ID"
   };
   
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  import { initializeApp } from "firebase/app";
+  import { getAuth } from "firebase/auth";
+  import { getFirestore } from "firebase/firestore";
+  
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
   

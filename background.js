@@ -48,7 +48,7 @@ function resetTimer() {
 }
 
 function triggerOverlay() {
-  chrome.storage.local.get(['isActive', 'sessions', 'longBreak'], (result) => {
+  chrome.storage.local.get(['isActive'], (result) => {
     if (result.isActive) {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.scripting.executeScript({
@@ -56,15 +56,6 @@ function triggerOverlay() {
           files: ['content.js']
         });
       });
-      if (result.longBreak) {
-        chrome.storage.local.set({ longBreak: false, sessions: 0 });
-      } else {
-        chrome.storage.local.set({ sessions: result.sessions + 1 });
-        if (result.sessions + 1 >= 3) { // Default: every 3 sessions recommend a longer break
-          chrome.storage.local.set({ longBreak: true });
-          chrome.alarms.create('long-break-timer', { delayInMinutes: 10 }); // 10 minutes long break
-        }
-      }
     }
   });
 }
