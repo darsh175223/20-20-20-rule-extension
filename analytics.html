@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analytics</title>
+  <script src="lib/firebase-app.js"></script>
+  <script src="lib/firebase-auth.js"></script>
+  <script src="lib/firebase-firestore.js"></script>
+  <script src="firebaseConfig.js"></script>
+  <script src="analytics.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #charts {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .chart {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Analytics</h1>
+  <div id="charts">
+    <div id="dailyChart" class="chart"></div>
+    <div id="weeklyChart" class="chart"></div>
+    <div id="monthlyChart" class="chart"></div>
+  </div>
+</body>
+</html>
