@@ -1,58 +1,42 @@
-chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ isActive: false, endTime: null });
-  });
-  
-  chrome.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === '20-20-20-timer') {
-      triggerOverlay();
-    }
-  });
-  
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === 'triggerOverlay') {
-      triggerOverlay();
-    } else if (message.action === 'resetTimer') {
+chrome.storage.local.get(['isActive'], (result) => {
+  if (result.isActive) {
+    let overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'black';
+    overlay.style.color = 'green';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    overlay.style.fontSize = '48px';
+    overlay.style.zIndex = '9999';
+    document.body.appendChild(overlay);
+
+    let countdown = 20;
+    overlay.textContent = countdown;
+
+    let countdownInterval = setInterval(() => {
+      countdown -= 1;
+      if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        overlay.remove();
+        resetTimer();
+      } else {
+        overlay.textContent = countdown;
+      }
+    }, 1000);
+
+    overlay.addEventListener('click', () => {
+      clearInterval(countdownInterval);
+      overlay.remove();
       resetTimer();
-    }
-  });
-  
-  function startTimer() {
-    chrome.storage.local.get(['autoStart'], (result) => {
-      const autoStart = result.autoStart || false; // Default to disabled autoStart
-      if (autoStart) {
-        chrome.storage.local.get(['endTime'], (result) => {
-          let endTime = result.endTime ? new Date(result.endTime) : new Date(Date.now() + 20 * 60 * 1000);
-          if (!result.endTime) {
-            chrome.storage.local.set({ endTime: endTime.toISOString() });
-          }
-          chrome.alarms.create('20-20-20-timer', { when: endTime.getTime() });
-        });
-      }
     });
   }
-  
-  function stopTimer() {
-    chrome.alarms.clear('20-20-20-timer');
-    chrome.storage.local.set({ endTime: null });
-  }
-  
-  function resetTimer() {
-    stopTimer();
-    startTimer();
-  }
-  
-  function triggerOverlay() {
-    chrome.storage.local.get(['isActive'], (result) => {
-      if (result.isActive) {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          chrome.scripting.executeScript({
-            target: { tabId: tabs[0].id },
-            files: ['content.js']
-          });
-        });
-      }
-    });
-  }
-  
-  // You'll need to create a separate content.js file to handle displaying the overlay on the webpage.
-  
+});
+
+function resetTimer() {
+  chrome.runtime.sendMessage({ action: 'resetTimer' });
+}
